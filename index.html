@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عيد سعيد يا أسماء 2026</title>
+    <title>تهنئة عيد الفطر - نينا</title>
     
-    <!-- استيراد خط عربي جميل من Google Fonts -->
+    <!-- استيراد خط عربي جميل -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&family=Amiri:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&family=Amiri:italic@1&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary-gold: #FFD700;
             --secondary-pink: #FF69B4;
             --accent-teal: #00CED1;
+            --soft-white: #f8f9fa;
             --dark-bg: #0f0c29;
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
@@ -43,10 +44,9 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            pointer-events: all; /* للسماح بالنقر لإطلاق الألعاب النارية */
+            pointer-events: all;
         }
 
-        /* واجهة المستخدم */
         .ui-layer {
             position: relative;
             z-index: 10;
@@ -59,15 +59,14 @@
             text-align: center;
         }
 
-        /* البطاقة الزجاجية */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 3rem 2rem;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             transform: translateY(30px);
@@ -77,10 +76,7 @@
         }
 
         @keyframes slideUpFade {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         h1 {
@@ -98,27 +94,67 @@
             font-family: 'Amiri', serif;
             font-size: 2rem;
             color: var(--accent-teal);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             font-style: italic;
         }
 
         p.message {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+            color: #e0e0e0;
+        }
+
+        /* تصميم خاص لقسم دعم الحجاب */
+        .hijab-support-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 105, 180, 0.1));
+            border-right: 5px solid var(--primary-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            text-align: right;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* أيقونة صغيرة زخرفية */
+        .hijab-support-box::before {
+            content: "🌸";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 3rem;
+            opacity: 0.3;
+            transform: rotate(-15deg);
+        }
+
+        .hijab-support-box h3 {
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hijab-support-box p {
+            font-size: 1.05rem;
             line-height: 1.8;
-            margin-bottom: 2rem;
-            color: #f0f0f0;
+            color: #fff;
+            margin-bottom: 10px;
         }
 
         .highlight {
             color: var(--primary-gold);
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
 
-        /* الزر التفاعلي */
         .btn {
             background: linear-gradient(45deg, var(--secondary-pink), #ff8c00);
             border: none;
-            padding: 12px 30px;
+            padding: 12px 35px;
             border-radius: 50px;
             color: white;
             font-family: 'Tajawal', sans-serif;
@@ -128,18 +164,19 @@
             transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
+            display: inline-block;
+            margin-top: 10px;
         }
 
         .btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+            box-shadow: 0 0 25px rgba(255, 105, 180, 0.7);
         }
 
         .btn:active {
             transform: scale(0.95);
         }
 
-        /* تذييل الصفحة */
         footer {
             position: absolute;
             bottom: 10px;
@@ -150,72 +187,81 @@
             z-index: 10;
         }
 
-        /* تصميم للجوال */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 1.5rem; }
-            .glass-card { padding: 2rem 1rem; margin: 0 10px; }
-        }
-        
-        /* تنبيهات Toast */
+        /* Toast Notification */
         .toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 206, 209, 0.9);
+            background: rgba(0, 206, 209, 0.95);
             color: #0f0c29;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 12px 25px;
+            border-radius: 30px;
             font-weight: bold;
             z-index: 100;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, top 0.3s;
             pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .toast.show { opacity: 1; }
+        .toast.show { opacity: 1; top: 30px; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .glass-card { padding: 2rem 1.5rem; margin: 0 10px; }
+            .hijab-support-box { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- خلفية الألعاب النارية -->
     <canvas id="canvas-container"></canvas>
+    <div id="toast" class="toast">الله يثبتكِ يا نينا ❤️</div>
 
-    <!-- التنبيهات -->
-    <div id="toast" class="toast">تم إطلاق الألعاب النارية! 🎆</div>
-
-    <!-- المحتوى الرئيسي -->
     <div class="ui-layer">
         <main class="glass-card">
             <h2>عيد الفطر المبارك</h2>
-            <h1>كل عام وأنتِ بخير<br>يا أسماء</h1>
+            <h1>كل عام وأنتِ بخير<br>يا نينا</h1>
+            
             <p class="message">
-                عام 2026 يحمل لكِ من الفرح ما يملأ قلبك.<br>
-                أتمنى لكِ من كل قلبي النجاح والتفوق في <span class="highlight">شهادة البكالوريا</span>.<br>
-                كوني مطمئنة، فأنا <span class="highlight">بجنبكِ دائماً وفي أي وقت</span> تحتاجينني فيه.<br>
-                أنتِ الأميرة الصغيرة التي تستأهل كل الحب والنجاح!
+                بمناسبة عيد الفطر السعيد، أردت أن أبعث لكِ بكل الحب والتقدير.<br>
+                عام جديد، وقلب جديد مليء بالإيمان والأمل.
             </p>
 
-            <div class="btn-group">
-                <button class="btn" onclick="launchMassiveFireworks()">احتفلي معنا! 🎉</button>
+            <!-- قسم دعم الحجاب -->
+            <div class="hijab-support-box">
+                <h3>🌼 رسالة فخر وتشجيع 🌼</h3>
+                <p>
+                    عزيزتي نينا، لا يسعني إلا أن أعبر عن فخري الكبير بكِ وبقرارك الجريء والجميل بالالتزام بحجابك.
+                </p>
+                <p>
+                    هذا الحجاب ليس مجرد زي، بل هو <span class="highlight">تاجٌ على رأسكِ</span>، واختيارٌ ينم عن قوة شخصيتك وثباتك. صدقيني، أنتِ الآن أجمل وأبهى مما كنتِ، لأن جمال الحجاب ينبع من طهارة الروح ونقاء القلب.
+                </p>
+                <p>
+                    قد تواجهين تحديات أو كلمات، لكن تذكري دائماً أنكِ تمشين في طريق النور، وأن الله معكِ ويرعاكِ. احرصي عليه كما تحرصين على أغلى ما تملكين، فهو درعك وحصنك وحفظك.
+                </p>
+                <p>
+                    أسأل الله العظيم أن يرزقكِ الثبات، وأن يملأ قلبكِ طمأنينة وسكينة، وأن يجعلكِ من الفائزين في الدنيا والآخرة. عقبال الجنة يا رب.
+                </p>
             </div>
+
+            <button class="btn" onclick="launchMassiveFireworks()">احتفلي بعيدك! 🎆</button>
         </main>
     </div>
 
     <footer>
-        صُنع بحب خاص لـ أسماء ❤️ | عيد الفطر 2026
+        صُنع بحب وتقدير لـ نينا ❤️ | عيد الفطر 2026
     </footer>
 
     <script>
         /**
          * منطق الرسوم المتحركة (Canvas Animation)
-         * يشمل: الألعاب النارية والفوانيس العائمة
          */
         const canvas = document.getElementById('canvas-container');
         const ctx = canvas.getContext('2d');
         let width, height;
 
-        // ضبط حجم الكانفاس
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
@@ -223,12 +269,12 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // مصفوفات الكائنات
         let fireworks = [];
         let particles = [];
         let lanterns = [];
+        const colors = ['#FFD700', '#FF69B4', '#00CED1', '#FF4500', '#ADFF2F', '#FFFFFF'];
 
-        // --- كلاس الألعاب النارية (الصاروخ) ---
+        // --- Firework Class ---
         class Firework {
             constructor(sx, sy, tx, ty) {
                 this.x = sx;
@@ -254,22 +300,13 @@
             update(index) {
                 this.coordinates.pop();
                 this.coordinates.unshift([this.x, this.y]);
-
-                if (this.targetRadius < 8) {
-                    this.targetRadius += 0.3;
-                } else {
-                    this.targetRadius = 1;
-                }
-
+                if (this.targetRadius < 8) this.targetRadius += 0.3;
+                else this.targetRadius = 1;
                 this.speed *= this.acceleration;
-                
                 const vx = Math.cos(this.angle) * this.speed;
                 const vy = Math.sin(this.angle) * this.speed;
-                
                 this.distanceTraveled = Math.sqrt(Math.pow(this.sx - this.x, 2) + Math.pow(this.sy - this.y, 2));
-
                 if (this.distanceTraveled >= this.distanceToTarget) {
-                    // وصول الصاروخ للهدف -> إنشاء انفجار
                     createParticles(this.tx, this.ty);
                     fireworks.splice(index, 1);
                 } else {
@@ -287,7 +324,7 @@
             }
         }
 
-        // --- كلاس الجزيئات (الانفجار) ---
+        // --- Particle Class ---
         class Particle {
             constructor(x, y) {
                 this.x = x;
@@ -314,10 +351,7 @@
                 this.x += Math.cos(this.angle) * this.speed;
                 this.y += Math.sin(this.angle) * this.speed + this.gravity;
                 this.alpha -= this.decay;
-
-                if (this.alpha <= this.decay) {
-                    particles.splice(index, 1);
-                }
+                if (this.alpha <= this.decay) particles.splice(index, 1);
             }
 
             draw() {
@@ -329,7 +363,7 @@
             }
         }
 
-        // --- كلاس الفوانيس ---
+        // --- Lantern Class ---
         class Lantern {
             constructor() {
                 this.x = Math.random() * width;
@@ -345,7 +379,6 @@
                 this.y -= this.speed;
                 this.wobble += this.wobbleSpeed;
                 this.x += Math.sin(this.wobble) * 0.5;
-
                 if (this.y < -50) {
                     this.y = height + 50;
                     this.x = Math.random() * width;
@@ -357,83 +390,58 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
                 ctx.fill();
-                
-                // وهج الفانوس
                 ctx.shadowBlur = 20;
                 ctx.shadowColor = "orange";
                 ctx.fill();
-                ctx.shadowBlur = 0; // إعادة التعيين
+                ctx.shadowBlur = 0;
             }
         }
 
-        // إنشاء انفجار
         function createParticles(x, y) {
             let particleCount = 50;
-            while (particleCount--) {
-                particles.push(new Particle(x, y));
-            }
+            while (particleCount--) particles.push(new Particle(x, y));
         }
 
-        // تهيئة الفوانيس
         function initLanterns() {
-            for (let i = 0; i < 15; i++) {
-                lanterns.push(new Lantern());
-            }
+            for (let i = 0; i < 15; i++) lanterns.push(new Lantern());
         }
 
-        // حلقة الرسم الرئيسية
         function loop() {
             requestAnimationFrame(loop);
-
-            // خلفية شبه شفافة لتأثير الذيل (Trails)
             ctx.globalCompositeOperation = 'destination-out';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(0, 0, width, height);
             ctx.globalCompositeOperation = 'lighter';
 
-            // رسم الفوانيس (تحت الألعاب النارية)
+            // Lanterns
             ctx.globalCompositeOperation = 'source-over';
-            lanterns.forEach(lantern => {
-                lantern.update();
-                lantern.draw();
-            });
+            lanterns.forEach(lantern => { lantern.update(); lantern.draw(); });
 
-            // رسم الألعاب النارية
+            // Fireworks
             ctx.globalCompositeOperation = 'lighter';
-            fireworks.forEach((fw, i) => {
-                fw.update(i);
-                fw.draw();
-            });
+            fireworks.forEach((fw, i) => { fw.update(i); fw.draw(); });
+            particles.forEach((p, i) => { p.update(i); p.draw(); });
 
-            particles.forEach((p, i) => {
-                p.update(i);
-                p.draw();
-            });
-
-            // إطلاق عشوائي تلقائي
+            // Auto Firework
             if (Math.random() < 0.03) {
                 fireworks.push(new Firework(width / 2, height, Math.random() * width, Math.random() * height / 2));
             }
         }
 
-        // --- التفاعلات ---
-
-        // إطلاق لعبة نارية عند النقر في أي مكان
+        // Interactions
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
-            // إطلاق صاروخ من الأسفل نحو مكان النقر
             fireworks.push(new Firework(width / 2, height, e.clientX - rect.left, e.clientY - rect.top));
         });
 
-        // زر "احتفلي معنا"
         function launchMassiveFireworks() {
-            showToast("🎆 مبروك عيدك يا أسماء! 🎆");
-            for(let i=0; i<10; i++) {
+            showToast("🎆 عيدكِ مبارك يا أجمل نينا! 🎆");
+            for(let i=0; i<12; i++) {
                 setTimeout(() => {
                     let x = Math.random() * width;
                     let y = Math.random() * (height / 2);
                     fireworks.push(new Firework(width / 2, height, x, y));
-                }, i * 300);
+                }, i * 200);
             }
         }
 
@@ -441,15 +449,11 @@
             const toast = document.getElementById('toast');
             toast.innerText = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // تشغيل النظام
         initLanterns();
         loop();
-
     </script>
 </body>
 </html>
