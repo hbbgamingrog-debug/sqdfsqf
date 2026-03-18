@@ -114,14 +114,7 @@
             font-weight: bold;
         }
 
-        /* الأزرار التفاعلية */
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        /* الزر التفاعلي */
         .btn {
             background: linear-gradient(45deg, var(--secondary-pink), #ff8c00);
             border: none;
@@ -234,9 +227,6 @@
         let fireworks = [];
         let particles = [];
         let lanterns = [];
-
-        // ألوان عشوائية للألعاب النارية
-        const colors = ['#FFD700', '#FF69B4', '#00CED1', '#FF4500', '#ADFF2F', '#FFFFFF'];
 
         // --- كلاس الألعاب النارية (الصاروخ) ---
         class Firework {
