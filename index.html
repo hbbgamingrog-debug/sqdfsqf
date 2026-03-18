@@ -3,609 +3,463 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MC.H.B.B - Firebase Connected</title>
-    <!-- خطوط وأيقونات -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Firebase SDKs (أضفناها) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <title>عيد سعيد يا أسماء 2026</title>
+    
+    <!-- استيراد خط عربي جميل من Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&family=Amiri:ital@1&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS Styles (بقي كما هو) --- */
         :root {
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-main: #374151;
-            --text-light: #6b7280;
-            --primary-red: #D32F2F;
-            --primary-hover: #b71c1c;
-            --border-color: #e5e7eb;
-            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --primary-gold: #FFD700;
+            --secondary-pink: #FF69B4;
+            --accent-teal: #00CED1;
+            --dark-bg: #0f0c29;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
-        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .modal-box {
-            background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); animation: slideDown 0.3s ease;
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        .form-group input, .form-group textarea {
-            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; outline: none;
+
+        /* Canvas للخلفية المتحركة */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: all; /* للسماح بالنقر لإطلاق الألعاب النارية */
         }
-        .form-group input:focus { border-color: var(--primary-red); }
-        
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-modal { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-save { background: var(--primary-red); color: #fff; }
-        .btn-cancel { background: #f3f4f6; color: #374151; }
 
-        #fan-app { display: block; max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; position: relative; padding-bottom: 70px; box-shadow: 0 0 30px rgba(0,0,0,0.05); }
-        #admin-app { display: none; height: 100vh; display: flex; background: var(--bg-color); }
-        
-        .fan-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
-        .admin-trigger { color: #9ca3af; cursor: pointer; font-size: 1.2rem; }
-        .admin-trigger:hover { color: var(--primary-red); }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 480px;
-            background: #fff; display: flex; justify-content: space-around;
-            padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 50;
+        /* واجهة المستخدم */
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
         }
-        .b-nav { text-align: center; color: #9ca3af; cursor: pointer; font-size: 0.75rem; }
-        .b-nav i { display: block; font-size: 1.3rem; margin-bottom: 4px; }
-        .b-nav.active { color: var(--primary-red); }
 
-        .hero-card { background: #fff; margin: 20px; padding: 25px; border-radius: 16px; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); text-align: center; }
-        .match-vs { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .team-logo-circle { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; }
-        .vs-badge { background: var(--primary-red); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-family: 'Oswald'; }
-        
-        .news-feed { padding: 20px; }
-        .news-item { background: #fff; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
-        .news-img { width: 100%; height: 180px; object-fit: cover; }
-        .news-body { padding: 15px; }
-        .news-title { font-size: 1rem; font-weight: bold; margin-bottom: 10px; line-height: 1.5; }
+        /* البطاقة الزجاجية */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: slideUpFade 1.5s ease-out forwards;
+            margin-bottom: 2rem;
+        }
 
-        .grid-players { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .player-card { background: #fff; border-radius: 12px; text-align: center; padding-bottom: 15px; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
-        .player-img { width: 80px; height: 80px; border-radius: 50%; margin: 15px auto; object-fit: cover; }
-        .player-num { background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: -15px auto 10px; font-weight: bold; border: 2px solid #fff; }
+        @keyframes slideUpFade {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-        .league-container { padding: 0 20px; }
-        .league-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .rank-badge { width: 30px; height: 30px; background: #f3f4f6; color: #666; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
-        .rank-1 { background: #FFD700; color: #fff; } .rank-2 { background: #C0C0C0; color: #fff; } .rank-3 { background: #CD7F32; color: #fff; }
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--primary-gold), #fff, var(--secondary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            line-height: 1.2;
+        }
 
-        .admin-sidebar { width: 260px; background: #fff; border-left: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; }
-        .admin-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .nav-item { padding: 12px; margin-bottom: 5px; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: var(--text-light); }
-        .nav-item:hover, .nav-item.active { background: #fee2e2; color: var(--primary-red); font-weight: bold; }
-        
-        .card { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: var(--shadow-soft); border: 1px solid var(--border-color); }
-        
-        .btn-add { background: var(--primary-red); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-del { color: #ef4444; background: none; border: none; cursor: pointer; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #f3f4f6; }
-        
-        .points-input { width: 60px; padding: 5px; text-align: center; border: 1px solid #ddd; border-radius: 4px; }
-        .rank-arrows i { cursor: pointer; color: #9ca3af; margin: 0 5px; }
-        .rank-arrows i:hover { color: var(--primary-red); }
+        h2 {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            color: var(--accent-teal);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
 
-        #login-screen { display: none; justify-content: center; align-items: center; height: 100vh; position: relative; z-index: 200; }
-        .login-box { background: #fff; padding: 40px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
-        .input-field { width: 100%; padding: 12px; margin: 10px 0; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 8px; outline: none; }
+        p.message {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: #f0f0f0;
+        }
+
+        .highlight {
+            color: var(--primary-gold);
+            font-weight: bold;
+        }
+
+        /* الأزرار التفاعلية */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--secondary-pink), #ff8c00);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* تذييل الصفحة */
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
+
+        /* تصميم للجوال */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .glass-card { padding: 2rem 1rem; margin: 0 10px; }
+        }
         
-        .hidden { display: none !important; }
-        .loader { text-align: center; padding: 20px; color: #999; }
+        /* تنبيهات Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 206, 209, 0.9);
+            color: #0f0c29;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- ================= Modals ================= -->
-    <div id="modal-player" class="modal-overlay">
-        <div class="modal-box">
-            <h3>إضافة لاعب جديد</h3>
-            <br>
-            <div class="form-group"><label>اسم اللاعب</label><input type="text" id="p-name"></div>
-            <div class="form-group"><label>المركز</label><input type="text" id="p-pos"></div>
-            <div class="form-group"><label>الرقم</label><input type="number" id="p-num"></div>
-            <div class="form-group"><label>رابط الصورة</label><input type="text" id="p-img"></div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('modal-player')">إلغاء</button>
-                <button class="btn-modal btn-save" onclick="savePlayer()">حفظ</button>
+    <!-- خلفية الألعاب النارية -->
+    <canvas id="canvas-container"></canvas>
+
+    <!-- التنبيهات -->
+    <div id="toast" class="toast">تم إطلاق الألعاب النارية! 🎆</div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="ui-layer">
+        <main class="glass-card">
+            <h2>عيد الفطر المبارك</h2>
+            <h1>كل عام وأنتِ بخير<br>يا أسماء</h1>
+            <p class="message">
+                عام 2026 يحمل لكِ من الفرح ما يملأ قلبك.<br>
+                أتمنى لكِ من كل قلبي النجاح والتفوق في <span class="highlight">شهادة البكالوريا</span>.<br>
+                كوني مطمئنة، فأنا <span class="highlight">بجنبكِ دائماً وفي أي وقت</span> تحتاجينني فيه.<br>
+                أنتِ الأميرة الصغيرة التي تستأهل كل الحب والنجاح!
+            </p>
+
+            <div class="btn-group">
+                <button class="btn" onclick="launchMassiveFireworks()">احتفلي معنا! 🎉</button>
             </div>
-        </div>
-    </div>
-
-    <div id="modal-match" class="modal-overlay">
-        <div class="modal-box">
-            <h3>إضافة مباراة</h3>
-            <br>
-            <div class="form-group"><label>الفريق المنافس</label><input type="text" id="m-opp"></div>
-            <div class="form-group"><label>شعار الخصم</label><input type="text" id="m-logo"></div>
-            <div class="form-group" style="display:flex; gap:10px;">
-                <div style="flex:1"><label>التاريخ</label><input type="date" id="m-date"></div>
-                <div style="flex:1"><label>الوقت</label><input type="time" id="m-time"></div>
-            </div>
-            <div class="form-group"><label>المكان</label><input type="text" id="m-loc" value="الملعب الرئيسي"></div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('modal-match')">إلغاء</button>
-                <button class="btn-modal btn-save" onclick="saveMatch()">حفظ</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-news" class="modal-overlay">
-        <div class="modal-box">
-            <h3>نشر خبر</h3>
-            <br>
-            <div class="form-group"><label>عنوان الخبر</label><input type="text" id="n-title"></div>
-            <div class="form-group"><label>الوصف</label><textarea id="n-desc" rows="3"></textarea></div>
-            <div class="form-group"><label>صورة</label><input type="text" id="n-img"></div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('modal-news')">إلغاء</button>
-                <button class="btn-modal btn-save" onclick="saveNews()">نشر</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-league" class="modal-overlay">
-        <div class="modal-box">
-            <h3>إضافة فريق للدوري</h3>
-            <br>
-            <div class="form-group"><label>اسم الفريق</label><input type="text" id="l-team"></div>
-            <div class="form-group"><label>النقاط</label><input type="number" id="l-pts" value="0"></div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('modal-league')">إلغاء</button>
-                <button class="btn-modal btn-save" onclick="saveTeam()">إضافة</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= Fan App ================= -->
-    <div id="fan-app">
-        <header class="fan-header">
-            <h1 style="color:var(--primary-red);">MC.H.B.B</h1>
-            <i class="fa-solid fa-shield-halved admin-trigger" onclick="showLogin()"></i>
-        </header>
-
-        <div id="fan-home" class="fan-page">
-            <div class="hero-card">
-                <h3>المباراة القادمة</h3>
-                <div id="next-match-container" class="loader">جاري التحميل...</div>
-            </div>
-            <h3 style="padding: 0 20px;">أحدث الأخبار</h3>
-            <div id="fan-news-list" class="news-feed"></div>
-        </div>
-
-        <div id="fan-news" class="fan-page hidden">
-            <h2 style="padding:20px;">الأخبار</h2>
-            <div id="fan-news-full" class="news-feed"></div>
-        </div>
-
-        <div id="fan-squad" class="fan-page hidden">
-            <h2 style="padding:20px;">التشكيلة</h2>
-            <div id="fan-squad-grid" class="grid-players"></div>
-        </div>
-
-        <div id="fan-league" class="fan-page hidden">
-            <h2 style="padding:20px;">ترتيب الدوري</h2>
-            <div id="fan-league-list" class="league-container"></div>
-        </div>
-
-        <nav class="bottom-nav">
-            <div class="b-nav active" onclick="switchFanPage('fan-home', this)"><i class="fa-solid fa-house"></i> الرئيسية</div>
-            <div class="b-nav" onclick="switchFanPage('fan-news', this)"><i class="fa-solid fa-newspaper"></i> الأخبار</div>
-            <div class="b-nav" onclick="switchFanPage('fan-squad', this)"><i class="fa-solid fa-shirt"></i> التشكيلة</div>
-            <div class="b-nav" onclick="switchFanPage('fan-league', this)"><i class="fa-solid fa-list-ol"></i> الدوري</div>
-        </nav>
-    </div>
-
-    <!-- ================= Login ================= -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h2 style="color:var(--primary-red); margin-bottom:10px;">Admin Login</h2>
-            <p style="color:#999; margin-bottom:20px;">Firebase Authentication</p>
-            <form onsubmit="doLogin(event)">
-                <input type="email" id="email" class="input-field" placeholder="Email">
-                <input type="password" id="pass" class="input-field" placeholder="Password">
-                <button type="submit" class="btn-save" style="width:100%; margin-top:20px;">دخول</button>
-                <button type="button" class="btn-cancel" style="width:100%; margin-top:10px;" onclick="backToFan()">عودة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ================= Admin ================= -->
-    <div id="admin-app" class="hidden">
-        <aside class="admin-sidebar">
-            <div style="font-weight:bold; margin-bottom:20px; color:var(--primary-red);">لوحة التحكم</div>
-            <div class="nav-item active" onclick="showAdminTab('dash')">الرئيسية</div>
-            <div class="nav-item" onclick="showAdminTab('squad')">التشكيلة</div>
-            <div class="nav-item" onclick="showAdminTab('matches')">المباريات</div>
-            <div class="nav-item" onclick="showAdminTab('news')">الأخبار</div>
-            <div class="nav-item" onclick="showAdminTab('league')">الدوري</div>
-            <div style="margin-top:auto;">
-                <div class="nav-item" onclick="logout()" style="color:#ef4444;">خروج</div>
-            </div>
-        </aside>
-        <main class="admin-content">
-            
-            <div id="adm-dash" class="adm-tab">
-                <h2>نظرة عامة</h2>
-                <div style="display:flex; gap:20px; margin-top:20px;">
-                    <div class="card" style="flex:1; text-align:center;"><h3 id="c-p">-</h3><p>لاعبين</p></div>
-                    <div class="card" style="flex:1; text-align:center;"><h3 id="c-m">-</h3><p>مباريات</p></div>
-                    <div class="card" style="flex:1; text-align:center;"><h3 id="c-n">-</h3><p>أخبار</p></div>
-                </div>
-            </div>
-
-            <div id="adm-squad" class="adm-tab hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2>إدارة اللاعبين</h2>
-                    <button class="btn-add" onclick="openModal('modal-player')"><i class="fa-solid fa-plus"></i> إضافة</button>
-                </div>
-                <div class="card"><table id="adm-squad-table"></table></div>
-            </div>
-
-            <div id="adm-matches" class="adm-tab hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2>جدول المباريات</h2>
-                    <button class="btn-add" onclick="openModal('modal-match')"><i class="fa-solid fa-plus"></i> إضافة</button>
-                </div>
-                <div class="card"><table id="adm-matches-table"></table></div>
-            </div>
-
-            <div id="adm-news" class="adm-tab hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2>إدارة الأخبار</h2>
-                    <button class="btn-add" onclick="openModal('modal-news')"><i class="fa-solid fa-plus"></i> نشر</button>
-                </div>
-                <div class="card"><table id="adm-news-table"></table></div>
-            </div>
-
-            <div id="adm-league" class="adm-tab hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2>ترتيب الدوري</h2>
-                    <button class="btn-add" onclick="openModal('modal-league')"><i class="fa-solid fa-plus"></i> فريق</button>
-                </div>
-                <div class="card"><table id="adm-league-table"></table></div>
-            </div>
-
         </main>
     </div>
 
+    <footer>
+        صُنع بحب خاص لـ أسماء ❤️ | عيد الفطر 2026
+    </footer>
+
     <script>
-        // --- 1. تهيئة Firebase (ضع مفاتيحك هنا) ---
-        const firebaseConfig = {
-            // استبدل القيم التالية بما حصلت عليه من Firebase Console
-            apiKey: "AIzaSyD-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "xxxxxxxxxx",
-            appId: "x:xxxxxxxxxxxxxxxxxxxx"
-        };
+        /**
+         * منطق الرسوم المتحركة (Canvas Animation)
+         * يشمل: الألعاب النارية والفوانيس العائمة
+         */
+        const canvas = document.getElementById('canvas-container');
+        const ctx = canvas.getContext('2d');
+        let width, height;
 
-        // تهيئة التطبيق
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        // ضبط حجم الكانفاس
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        window.addEventListener('resize', resize);
+        resize();
 
-        // --- 2. منطق المصادقة (Auth) ---
-        function doLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            
-            auth.signInWithEmailAndPassword(email, pass)
-                .then(() => {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('admin-app').classList.remove('hidden');
-                    // سيتم استدعاء initListeners() تلقائياً عند تغيير حالة المستخدم
-                })
-                .catch(err => alert('خطأ في الدخول: ' + err.message));
-        }
+        // مصفوفات الكائنات
+        let fireworks = [];
+        let particles = [];
+        let lanterns = [];
 
-        function logout() {
-            auth.signOut();
-            document.getElementById('admin-app').classList.add('hidden');
-            document.getElementById('fan-app').classList.remove('hidden');
-        }
+        // ألوان عشوائية للألعاب النارية
+        const colors = ['#FFD700', '#FF69B4', '#00CED1', '#FF4500', '#ADFF2F', '#FFFFFF'];
 
-        // مراقبة حالة تسجيل الدخول تلقائياً
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // المستخدم مسجل دخول -> استمع للتحديثات
-                initDatabaseListeners();
-            } else {
-                // زائر -> استمع للتحديثات (للقراءة فقط)
-                initDatabaseListeners();
+        // --- كلاس الألعاب النارية (الصاروخ) ---
+        class Firework {
+            constructor(sx, sy, tx, ty) {
+                this.x = sx;
+                this.y = sy;
+                this.sx = sx;
+                this.sy = sy;
+                this.tx = tx;
+                this.ty = ty;
+                this.distanceToTarget = Math.sqrt(Math.pow(tx - sx, 2) + Math.pow(ty - sy, 2));
+                this.distanceTraveled = 0;
+                this.coordinates = [];
+                this.coordinateCount = 3;
+                while (this.coordinateCount--) {
+                    this.coordinates.push([this.x, this.y]);
+                }
+                this.angle = Math.atan2(ty - sy, tx - sx);
+                this.speed = 2;
+                this.acceleration = 1.05;
+                this.brightness = Math.random() * 50 + 50;
+                this.targetRadius = 1;
             }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+
+                if (this.targetRadius < 8) {
+                    this.targetRadius += 0.3;
+                } else {
+                    this.targetRadius = 1;
+                }
+
+                this.speed *= this.acceleration;
+                
+                const vx = Math.cos(this.angle) * this.speed;
+                const vy = Math.sin(this.angle) * this.speed;
+                
+                this.distanceTraveled = Math.sqrt(Math.pow(this.sx - this.x, 2) + Math.pow(this.sy - this.y, 2));
+
+                if (this.distanceTraveled >= this.distanceToTarget) {
+                    // وصول الصاروخ للهدف -> إنشاء انفجار
+                    createParticles(this.tx, this.ty);
+                    fireworks.splice(index, 1);
+                } else {
+                    this.x += vx;
+                    this.y += vy;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = `hsl(${Math.random() * 360}, 100%, ${this.brightness}%)`;
+                ctx.stroke();
+            }
+        }
+
+        // --- كلاس الجزيئات (الانفجار) ---
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.coordinates = [];
+                this.coordinateCount = 5;
+                while (this.coordinateCount--) {
+                    this.coordinates.push([this.x, this.y]);
+                }
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 10 + 1;
+                this.friction = 0.95;
+                this.gravity = 1;
+                this.hue = Math.random() * 360;
+                this.brightness = Math.random() * 50 + 50;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+            }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+                this.speed *= this.friction;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed + this.gravity;
+                this.alpha -= this.decay;
+
+                if (this.alpha <= this.decay) {
+                    particles.splice(index, 1);
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+                ctx.stroke();
+            }
+        }
+
+        // --- كلاس الفوانيس ---
+        class Lantern {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 100;
+                this.radius = Math.random() * 15 + 10;
+                this.color = `rgba(255, ${Math.floor(Math.random() * 100 + 150)}, 0, 0.6)`;
+                this.speed = Math.random() * 1 + 0.5;
+                this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = Math.random() * 0.05 + 0.01;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.5;
+
+                if (this.y < -50) {
+                    this.y = height + 50;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // وهج الفانوس
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = "orange";
+                ctx.fill();
+                ctx.shadowBlur = 0; // إعادة التعيين
+            }
+        }
+
+        // إنشاء انفجار
+        function createParticles(x, y) {
+            let particleCount = 50;
+            while (particleCount--) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        // تهيئة الفوانيس
+        function initLanterns() {
+            for (let i = 0; i < 15; i++) {
+                lanterns.push(new Lantern());
+            }
+        }
+
+        // حلقة الرسم الرئيسية
+        function loop() {
+            requestAnimationFrame(loop);
+
+            // خلفية شبه شفافة لتأثير الذيل (Trails)
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'lighter';
+
+            // رسم الفوانيس (تحت الألعاب النارية)
+            ctx.globalCompositeOperation = 'source-over';
+            lanterns.forEach(lantern => {
+                lantern.update();
+                lantern.draw();
+            });
+
+            // رسم الألعاب النارية
+            ctx.globalCompositeOperation = 'lighter';
+            fireworks.forEach((fw, i) => {
+                fw.update(i);
+                fw.draw();
+            });
+
+            particles.forEach((p, i) => {
+                p.update(i);
+                p.draw();
+            });
+
+            // إطلاق عشوائي تلقائي
+            if (Math.random() < 0.03) {
+                fireworks.push(new Firework(width / 2, height, Math.random() * width, Math.random() * height / 2));
+            }
+        }
+
+        // --- التفاعلات ---
+
+        // إطلاق لعبة نارية عند النقر في أي مكان
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // إطلاق صاروخ من الأسفل نحو مكان النقر
+            fireworks.push(new Firework(width / 2, height, e.clientX - rect.left, e.clientY - rect.top));
         });
 
-        // --- 3. منطق قاعدة البيانات (Real-time Listeners) ---
-        function initDatabaseListeners() {
-            // الاستماع للاعبين
-            db.collection('players').onSnapshot(snapshot => {
-                const players = [];
-                snapshot.forEach(doc => players.push({ id: doc.id, ...doc.data() }));
-                renderAdminSquad(players);
-                renderFanSquad(players);
-                updateStats('players', players.length);
-            });
-
-            // الاستماع للمباريات
-            db.collection('matches').orderBy('date', 'desc').onSnapshot(snapshot => {
-                const matches = [];
-                snapshot.forEach(doc => matches.push({ id: doc.id, ...doc.data() }));
-                renderAdminMatches(matches);
-                renderFanMatch(matches.length > 0 ? matches[0] : null); // أول مباراة
-                updateStats('matches', matches.length);
-            });
-
-            // الاستماع للأخبار
-            db.collection('news').orderBy('date', 'desc').onSnapshot(snapshot => {
-                const news = [];
-                snapshot.forEach(doc => news.push({ id: doc.id, ...doc.data() }));
-                renderAdminNews(news);
-                renderFanNews(news);
-                updateStats('news', news.length);
-            });
-
-            // الاستماع للدوري (نستخدم مستند واحد لسهولة الترتيب اليدوي)
-            db.collection('settings').doc('league_settings').onSnapshot(doc => {
-                const data = doc.data();
-                const teams = data && data.teams ? data.teams : [];
-                renderAdminLeague(teams);
-                renderFanLeague(teams);
-            });
-        }
-
-        // --- 4. دوال الكتابة (Add/Edit/Delete) ---
-
-        // حفظ لاعب
-        function savePlayer() {
-            const name = document.getElementById('p-name').value;
-            const pos = document.getElementById('p-pos').value;
-            const num = document.getElementById('p-num').value;
-            let img = document.getElementById('p-img').value;
-            if(!img) img = `https://picsum.photos/seed/${Date.now()}/100/100`;
-
-            if(name && num) {
-                db.collection('players').add({
-                    name, pos, num, img,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                closeModal('modal-player');
-                clearForms();
-            } else alert('البيانات ناقصة');
-        }
-
-        // حفظ مباراة
-        function saveMatch() {
-            const opp = document.getElementById('m-opp').value;
-            let logo = document.getElementById('m-logo').value;
-            const date = document.getElementById('m-date').value;
-            const time = document.getElementById('m-time').value;
-            const loc = document.getElementById('m-loc').value;
-            if(!logo) logo = 'https://via.placeholder.com/100?text=Team';
-
-            if(opp && date) {
-                db.collection('matches').add({
-                    opp, logo, date, time, loc,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                closeModal('modal-match');
-                clearForms();
-            } else alert('البيانات ناقصة');
-        }
-
-        // حفظ خبر
-        function saveNews() {
-            const title = document.getElementById('n-title').value;
-            const desc = document.getElementById('n-desc').value;
-            let img = document.getElementById('n-img').value;
-            const date = new Date().toLocaleDateString('ar-SA');
-            if(!img) img = `https://picsum.photos/seed/${Date.now()}/500/300`;
-
-            if(title) {
-                db.collection('news').add({
-                    title, desc, img, date,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                closeModal('modal-news');
-                clearForms();
-            } else alert('العنوان مطلوب');
-        }
-
-        // حفظ فريق للدوري
-        function saveTeam() {
-            const team = document.getElementById('l-team').value;
-            const pts = parseInt(document.getElementById('l-pts').value);
-            
-            // أولاً نحصل على المصفوفة الحالية
-            db.collection('settings').doc('league_settings').get().then(doc => {
-                let teams = [];
-                if(doc.exists) teams = doc.data().teams || [];
-                
-                teams.push({ id: Date.now().toString(), team, pts });
-                
-                // نحفظ المصفوفة كاملة
-                db.collection('settings').doc('league_settings').set({ teams })
-                    .then(() => {
-                        closeModal('modal-league');
-                        clearForms();
-                    });
-            });
-        }
-
-        // تحديث نقاط الدوري
-        function updatePoints(id, newPts) {
-            db.collection('settings').doc('league_settings').get().then(doc => {
-                let teams = doc.data().teams;
-                const t = teams.find(item => item.id === id);
-                if(t) { t.pts = parseInt(newPts); }
-                db.collection('settings').doc('league_settings').set({ teams });
-            });
-        }
-
-        // تحريك ترتيب الدوري
-        function moveRank(index, direction) {
-            db.collection('settings').doc('league_settings').get().then(doc => {
-                let teams = doc.data().teams;
-                const idx = parseInt(index);
-                if (direction === -1 && idx > 0) {
-                    [teams[idx], teams[idx-1]] = [teams[idx-1], teams[idx]];
-                } else if (direction === 1 && idx < teams.length - 1) {
-                    [teams[idx], teams[idx+1]] = [teams[idx+1], teams[idx]];
-                }
-                db.collection('settings').doc('league_settings').set({ teams });
-            });
-        }
-
-        // حذف
-        function deleteItem(collection, id) {
-            if(confirm('حذف العنصر؟')) {
-                if(collection === 'league') {
-                    // حذف من مصفوفة الدوري
-                    db.collection('settings').doc('league_settings').get().then(doc => {
-                        let teams = doc.data().teams;
-                        teams = teams.filter(t => t.id !== id);
-                        db.collection('settings').doc('league_settings').set({ teams });
-                    });
-                } else {
-                    // حذف مستند عادي
-                    db.collection(collection).doc(id).delete();
-                }
+        // زر "احتفلي معنا"
+        function launchMassiveFireworks() {
+            showToast("🎆 مبروك عيدك يا أسماء! 🎆");
+            for(let i=0; i<10; i++) {
+                setTimeout(() => {
+                    let x = Math.random() * width;
+                    let y = Math.random() * (height / 2);
+                    fireworks.push(new Firework(width / 2, height, x, y));
+                }, i * 300);
             }
         }
 
-        // --- 5. دوال الرسم (Rendering) ---
-        // هي نفس الدوال السابقة ولكنها تأخذ البيانات كـ Parameter
-        function updateStats(type, count) {
-            if(type === 'players') document.getElementById('c-p').innerText = count;
-            if(type === 'matches') document.getElementById('c-m').innerText = count;
-            if(type === 'news') document.getElementById('c-n').innerText = count;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        function renderAdminSquad(players) {
-            let html = `<tr><th>صورة</th><th>اسم</th><th>رقم</th><th>حذف</th></tr>`;
-            players.forEach(p => {
-                html += `<tr><td><img src="${p.img}" width="30"></td><td>${p.name}</td><td>${p.num}</td><td><i class="fa-solid fa-trash btn-del" onclick="deleteItem('players', '${p.id}')"></i></td></tr>`;
-            });
-            document.getElementById('adm-squad-table').innerHTML = html;
-        }
+        // تشغيل النظام
+        initLanterns();
+        loop();
 
-        function renderAdminMatches(matches) {
-            let html = `<tr><th>خصم</th><th>تاريخ</th><th>حذف</th></tr>`;
-            matches.forEach(m => {
-                html += `<tr><td>${m.opp}</td><td>${m.date}</td><td><i class="fa-solid fa-trash btn-del" onclick="deleteItem('matches', '${m.id}')"></i></td></tr>`;
-            });
-            document.getElementById('adm-matches-table').innerHTML = html;
-        }
-
-        function renderAdminNews(news) {
-            let html = `<tr><th>عنوان</th><th>حذف</th></tr>`;
-            news.forEach(n => {
-                html += `<tr><td>${n.title}</td><td><i class="fa-solid fa-trash btn-del" onclick="deleteItem('news', '${n.id}')"></i></td></tr>`;
-            });
-            document.getElementById('adm-news-table').innerHTML = html;
-        }
-
-        function renderAdminLeague(teams) {
-            let html = `<tr><th>مركز</th><th>فريق</th><th>نقاط</th><th>حذف</th></tr>`;
-            teams.forEach((t, idx) => {
-                html += `<tr>
-                    <td class="rank-arrows">
-                        <i class="fa-solid fa-chevron-up" onclick="moveRank(${idx}, -1)"></i>
-                        <i class="fa-solid fa-chevron-down" onclick="moveRank(${idx}, 1)"></i>
-                    </td>
-                    <td>${t.team}</td>
-                    <td><input type="number" class="points-input" value="${t.pts}" onchange="updatePoints('${t.id}', this.value)"></td>
-                    <td><i class="fa-solid fa-trash btn-del" onclick="deleteItem('league', '${t.id}')"></i></td>
-                </tr>`;
-            });
-            document.getElementById('adm-league-table').innerHTML = html;
-        }
-
-        function renderFanMatch(match) {
-            const container = document.getElementById('next-match-container');
-            if(!match) {
-                container.innerHTML = '<p>لا توجد مباريات قادمة</p>';
-                return;
-            }
-            container.innerHTML = `
-                <div class="match-vs">
-                    <div><img src="https://z-cdn-media.chatglm.cn/files/9593bc7a-2998-4cc6-ad61-1dceaee444bb.jpg" class="team-logo-circle"><div>نحن</div></div>
-                    <div style="text-align:center;"><div class="vs-badge">VS</div><div style="color:var(--primary-red); font-weight:bold;">${match.time}</div><div>${match.date}</div></div>
-                    <div><img src="${match.logo}" class="team-logo-circle"><div>${match.opp}</div></div>
-                </div>
-                <div style="margin-top:15px; background:#f9f9f9; padding:8px; border-radius:8px;"><i class="fa-solid fa-location-dot"></i> ${match.loc}</div>
-            `;
-        }
-
-        function renderFanNews(newsList) {
-            let html = '';
-            newsList.forEach(n => {
-                html += `<div class="news-item"><img src="${n.img}" class="news-img"><div class="news-body"><div style="color:var(--primary-red); font-size:0.8rem; font-weight:bold; margin-bottom:5px;">${n.date}</div><div class="news-title">${n.title}</div><div style="color:#666; font-size:0.9rem;">${n.desc}</div></div></div>`;
-            });
-            const htmlContent = html || '<p style="text-align:center; padding:20px; color:#999;">لا توجد أخبار</p>';
-            document.getElementById('fan-news-list').innerHTML = htmlContent;
-            document.getElementById('fan-news-full').innerHTML = htmlContent;
-        }
-
-        function renderFanSquad(players) {
-            let html = '';
-            players.forEach(p => {
-                html += `<div class="player-card"><img src="${p.img}" class="player-img"><div class="player-num">${p.num}</div><div style="font-weight:bold;">${p.name}</div><div style="color:#666; font-size:0.8rem;">${p.pos}</div></div>`;
-            });
-            document.getElementById('fan-squad-grid').innerHTML = html;
-        }
-
-        function renderFanLeague(teams) {
-            let html = '';
-            teams.forEach((t, idx) => {
-                html += `<div class="league-row"><div class="rank-badge rank-${idx+1}">${idx+1}</div><div style="flex:1; font-weight:bold;">${t.team}</div><div style="font-weight:bold; color:var(--primary-red);">${t.pts}</div></div>`;
-            });
-            document.getElementById('fan-league-list').innerHTML = html;
-        }
-
-        // --- 6. Utilities ---
-        function showLogin() { document.getElementById('fan-app').classList.add('hidden'); document.getElementById('login-screen').style.display = 'flex'; }
-        function backToFan() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('fan-app').classList.remove('hidden'); }
-        function switchFanPage(pageId, el) {
-            document.querySelectorAll('.fan-page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(pageId).classList.remove('hidden');
-            document.querySelectorAll('.b-nav').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-        }
-        function showAdminTab(tabId) {
-            document.querySelectorAll('.adm-tab').forEach(el => el.classList.add('hidden'));
-            document.getElementById('adm-'+tabId).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function clearForms() {
-            const inputs = document.querySelectorAll('input, textarea');
-            inputs.forEach(i => i.value = '');
-        }
     </script>
 </body>
 </html>
